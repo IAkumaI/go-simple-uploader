@@ -7,9 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
-)
 
-import (
 	"github.com/IAkumaI/retry"
 	"github.com/jlaffaye/ftp"
 )
@@ -74,8 +72,8 @@ func (uploader *FTPUploader) Upload(file *os.File, name string) (string, error) 
 		for i := 0; i <= len(storDirs); i++ {
 			testPath := strings.Join(storDirs[:i], "/")
 			if testPath != "" {
-				_, err := client.List(testPath)
-				if err != nil { // Директория не существует
+				entries, err := client.List(testPath)
+				if len(entries) == 0 || err != nil { // Директория не существует
 					err := client.MakeDir(testPath)
 					if err != nil {
 						log.Printf("[SKIP] Ошибка при создании директории %s: %v\n", testPath, err)
